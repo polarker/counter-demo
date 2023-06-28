@@ -1,0 +1,19 @@
+Contract Counter(mut owner: Address, mut count: U256, @unused decimals: U256) {
+  const InvalidCaller = 0
+
+  pub fn getCurrentCount() -> U256 {
+    return count
+  }
+
+  @using(updateFields = true)
+  pub fn add(num: U256) -> () {
+    checkCaller!(callerAddress!() == owner, InvalidCaller)
+    count = count + num
+  }
+
+  @using(updateFields = true)
+  pub fn setOwner(newOwner: Address) -> () {
+    checkCaller!(callerAddress!() == owner, InvalidCaller)
+    owner = newOwner
+  }
+}
