@@ -1,12 +1,12 @@
-import { NetworkId, SignerProvider, web3 } from '@alephium/web3'
+import { Address, DUST_AMOUNT, NetworkId, SignerProvider, web3 } from '@alephium/web3'
 import configuration from 'alephium.config'
-import { Add, CounterInstance } from 'artifacts/ts'
+import { Increase, Decrease, CounterInstance } from 'artifacts/ts'
 import { loadDeployments } from '../../artifacts/ts/deployments'
 
 export interface CounterConfig {
   network: NetworkId
   groupIndex: number
-  decimals: number
+  countDecimals: number
   counter: CounterInstance
   pollingInterval: number
 }
@@ -23,11 +23,18 @@ function getCounterConfig(): CounterConfig {
   const decimals = networkConfig.settings.countDecimals
   web3.setCurrentNodeProvider(networkConfig.nodeUrl)
   const pollingInterval = network === 'devnet' ? 1000 : 10000
-  return { network, groupIndex, decimals, counter, pollingInterval }
+  return { network, groupIndex, countDecimals: decimals, counter, pollingInterval }
 }
 
 export const counterConfig = getCounterConfig()
 
-export async function add(signer: SignerProvider, num: bigint) {
-  return await Add.execute(signer, { initialFields: { counter: counterConfig.counter.contractId, num } })
+export async function increase(signer: SignerProvider, num: bigint) {
+  return await Increase.execute(signer, { initialFields: { counter: counterConfig.counter.contractId, num } })
+}
+
+export async function decrease(signer: SignerProvider, num: bigint, to: Address) {
+  return await Decrease.execute(signer, {
+    initialFields: { counter: counterConfig.counter.contractId, num, to },
+    attoAlphAmount: DUST_AMOUNT * 2n
+  })
 }
