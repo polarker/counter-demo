@@ -1,4 +1,0 @@
-@using(preapprovedAssets = false)
-TxScript Add(counter: Counter, num: U256) {
-  counter.add(num)
-}

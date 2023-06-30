@@ -3,8 +3,23 @@ import { Address } from '@alephium/web3'
 import { testAddress } from '@alephium/web3-test'
 
 export type Settings = {
-  decimals: number,
+  tokenSymbol: string,
+  tokenName: string,
+  totalSupply: bigint,
+  rewardPerReduction: bigint
+
+  countDecimals: number,
   owner: Address
+}
+
+const devnetSettings: Settings = {
+  tokenSymbol: 'CounterToken',
+  tokenName: 'CT',
+  totalSupply: 1n << 255n,
+  rewardPerReduction: (10n ** 18n) / (100n * (10n ** 9n)), // the decimals of the token is 18, reward 1 token for every decrease of 100
+
+  countDecimals: 9,
+  owner: testAddress
 }
 
 const configuration: Configuration<Settings> = {
@@ -12,10 +27,7 @@ const configuration: Configuration<Settings> = {
     devnet: {
       nodeUrl: 'http://localhost:22973',
       privateKeys: ['a642942e67258589cd2b1822c631506632db5a12aabcf413604e785300d762a5'],
-      settings: {
-        decimals: 9,
-        owner: testAddress
-      }
+      settings: devnetSettings
     },
 
     testnet: {

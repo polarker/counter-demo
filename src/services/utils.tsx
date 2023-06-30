@@ -20,7 +20,7 @@ function getCounterConfig(): CounterConfig {
   const counter = loadDeployments(network).contracts.Counter.contractInstance
   const groupIndex = counter.groupIndex
   const networkConfig = configuration.networks[network]
-  const decimals = networkConfig.settings.decimals
+  const decimals = networkConfig.settings.countDecimals
   web3.setCurrentNodeProvider(networkConfig.nodeUrl)
   const pollingInterval = network === 'devnet' ? 1000 : 10000
   return { network, groupIndex, decimals, counter, pollingInterval }

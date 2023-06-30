@@ -1,0 +1,3 @@
+TxScript Decrease(counter: Counter, num: U256, to: Address) {
+  counter.decrease{callerAddress!() -> ALPH: dustAmount!()}(num, to)
+}

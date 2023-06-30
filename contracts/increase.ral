@@ -1,0 +1,4 @@
+@using(preapprovedAssets = false)
+TxScript Increase(counter: Counter, num: U256) {
+  counter.increase(num)
+}

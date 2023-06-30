@@ -1,27 +1,113 @@
 {
   "version": "v2.3.5",
   "name": "Counter",
-  "bytecode": "0303091c402c010000000102a00102010001010009b4a000450c7ba00116002aa101010001010007b4a000450c7b1600a100",
-  "codeHash": "d1dade27f53987a0c9781fd0d5e56fd83856477487565499623659402aa02fd9",
+  "bytecode": "080809121b4024402d404440794089010000000102ce0002010000000102ce0102010000000102131202010000000102ce0202010000000102a0010201000101000cb4a000450c7ba00116002aa1010516005e01010203001ab4a000450c7ba00116002ba1011600ce032c1702b4160113c3038d7ea4c68000a71601b11602ab0616001601160260010001010007b4a000450c7b1600a100",
+  "codeHash": "0e84c774e596d3e49f84ddef11547fbe5a164689ed55a4d8b72e3e04e463d4ec",
   "fieldsSig": {
     "names": [
+      "symbol",
+      "name",
+      "totalSupply",
+      "rewardPerReduction",
       "owner",
       "count",
-      "decimals"
+      "countDecimals",
+      "__stdInterfaceId"
     ],
     "types": [
+      "ByteVec",
+      "ByteVec",
+      "U256",
+      "U256",
       "Address",
       "U256",
-      "U256"
+      "U256",
+      "ByteVec"
     ],
     "isMutable": [
+      false,
+      false,
+      false,
+      false,
       true,
       true,
+      false,
       false
     ]
   },
-  "eventsSig": [],
+  "eventsSig": [
+    {
+      "name": "CountIncreased",
+      "fieldNames": [
+        "num"
+      ],
+      "fieldTypes": [
+        "U256"
+      ]
+    },
+    {
+      "name": "CountDecreased",
+      "fieldNames": [
+        "num",
+        "to",
+        "rewardAmount"
+      ],
+      "fieldTypes": [
+        "U256",
+        "Address",
+        "U256"
+      ]
+    }
+  ],
   "functions": [
+    {
+      "name": "getSymbol",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
+    {
+      "name": "getName",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
+    {
+      "name": "getDecimals",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "U256"
+      ]
+    },
+    {
+      "name": "getTotalSupply",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "U256"
+      ]
+    },
     {
       "name": "getCurrentCount",
       "usePreapprovedAssets": false,
@@ -35,7 +121,7 @@
       ]
     },
     {
-      "name": "add",
+      "name": "increase",
       "usePreapprovedAssets": false,
       "useAssetsInContract": false,
       "isPublic": true,
@@ -46,6 +132,25 @@
         "U256"
       ],
       "paramIsMutable": [
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "decrease",
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": true,
+      "isPublic": true,
+      "paramNames": [
+        "num",
+        "to"
+      ],
+      "paramTypes": [
+        "U256",
+        "Address"
+      ],
+      "paramIsMutable": [
+        false,
         false
       ],
       "returnTypes": []
@@ -76,5 +181,6 @@
       }
     }
   ],
-  "enums": []
+  "enums": [],
+  "stdInterfaceId": "0001"
 }

@@ -11,8 +11,15 @@ import {
   SignerProvider,
   HexString,
 } from "@alephium/web3";
-import { default as AddScriptJson } from "../Add.ral.json";
+import { default as DecreaseScriptJson } from "../Decrease.ral.json";
+import { default as IncreaseScriptJson } from "../Increase.ral.json";
 
-export const Add = new ExecutableScript<{ counter: HexString; num: bigint }>(
-  Script.fromJson(AddScriptJson)
-);
+export const Decrease = new ExecutableScript<{
+  counter: HexString;
+  num: bigint;
+  to: Address;
+}>(Script.fromJson(DecreaseScriptJson));
+export const Increase = new ExecutableScript<{
+  counter: HexString;
+  num: bigint;
+}>(Script.fromJson(IncreaseScriptJson));

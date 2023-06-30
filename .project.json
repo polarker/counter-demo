@@ -9,18 +9,32 @@
     "ignoreCheckExternalCallerWarnings": false
   },
   "infos": {
-    "Add": {
-      "sourceFile": "add.ral",
-      "sourceCodeHash": "c225e547599bfdee1c1c47b2e2aabe8040e115b42d0d05f42774c1343589766c",
+    "Counter": {
+      "sourceFile": "counter.ral",
+      "sourceCodeHash": "d49cf730148f4b790a53206091fad830804c64a3b40c19ab1e833178058c31e6",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "0e84c774e596d3e49f84ddef11547fbe5a164689ed55a4d8b72e3e04e463d4ec",
+      "warnings": []
+    },
+    "Decrease": {
+      "sourceFile": "decrease.ral",
+      "sourceCodeHash": "de1a5a5ee55bef87fd2e29849022a9ccc56b0515affc47bbd6135b09381ab74d",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
-    "Counter": {
-      "sourceFile": "counter.ral",
-      "sourceCodeHash": "a986f78130a3c6c64384ba0ca1f1b1564ea3167d0eb8c8dcc6365ad553505ae8",
+    "IFungibleToken": {
+      "sourceFile": "../node_modules/@alephium/web3/std/fungible_token_interface.ral",
+      "sourceCodeHash": "6809cb06fb20fa7edf529461998beeebd12b1636d439612cca2f84214dbf4a20",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "d1dade27f53987a0c9781fd0d5e56fd83856477487565499623659402aa02fd9",
+      "codeHashDebug": "",
+      "warnings": []
+    },
+    "Increase": {
+      "sourceFile": "increase.ral",
+      "sourceCodeHash": "a4933580f6592c2361e1638124f3110cff699cf0310ac24ad61891808bb5b812",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
       "warnings": []
     }
   }
