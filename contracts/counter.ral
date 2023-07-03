@@ -34,16 +34,16 @@ Contract Counter(
     return count
   }
 
-  @using(updateFields = true)
+  @using(updateFields = true, checkExternalCaller = false)
   pub fn increase(num: U256) -> () {
-    checkCaller!(callerAddress!() == owner, InvalidCaller)
+    // checkCaller!(callerAddress!() == owner, InvalidCaller)
     count = count + num
     emit CountIncreased(num)
   }
 
-  @using(updateFields = true, assetsInContract = true, preapprovedAssets = true)
+  @using(updateFields = true, assetsInContract = true, preapprovedAssets = true, checkExternalCaller = false)
   pub fn decrease(num: U256, to: Address) -> () {
-    checkCaller!(callerAddress!() == owner, InvalidCaller)
+    // checkCaller!(callerAddress!() == owner, InvalidCaller)
     count = count - num
 
     let rewardAmount = num * rewardPerReduction

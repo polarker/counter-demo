@@ -45,10 +45,19 @@ function useCounterEvent(): {
 
 function formatEvent(event: EventType): string {
   const num = formatUnits(event.fields.num, counterConfig.countDecimals)
-  const fields = event.name === 'CountIncreased'
-    ? { ...event.fields, num }
-    : { ...event.fields, num, rewardAmount: formatUnits((event as CounterTypes.CountDecreasedEvent).fields.rewardAmount, 18) }
-  return `Event type: ${event.name}, fields: ${JSON.stringify(fields)}`
+  // const eventName = event.name === 'CountIncreased' ? 'ElectricityProduced' : 'ElectricityConsumed'
+  // const fields = event.name === 'CountIncreased'
+  //   ? { ...event.fields, num }
+  //   : { ...event.fields, num, rewardAmount: formatUnits((event as CounterTypes.CountDecreasedEvent).fields.rewardAmount, 18) }
+  // return `Event: ${eventName}, fields: ${JSON.stringify(fields)}`
+  switch (event.name) {
+    case 'CountIncreased':
+      return `ElectricityProduced: ${num} kWh`
+    case 'CountDecreased':
+      return `ElectricityConsumed: ${num} kWh, rewardAmount: ${formatUnits((event as CounterTypes.CountDecreasedEvent).fields.rewardAmount, 18)} ALPH`
+    default:
+      return ``
+  }
 }
 
 export const EventList = () => {

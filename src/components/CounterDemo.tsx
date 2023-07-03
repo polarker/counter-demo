@@ -52,9 +52,9 @@ function checkNumber(input: string, decimals: number): bigint {
 
 export const CounterDemo = () => {
   const context = useAlephiumConnectContext()
-  const [increaseNum, setIncreaseNum] = useState<bigint | undefined>()
-  const [decreaseNum, setDecreaseNum] = useState<bigint | undefined>()
-  const [toAddress, setToAddress] = useState<Address | undefined>()
+  const [increaseNum, setIncreaseNum] = useState<{ raw: string, value: bigint } | undefined>()
+  const [decreaseNum, setDecreaseNum] = useState<{ raw: string, value: bigint } | undefined>()
+  // const [toAddress, setToAddress] = useState<Address | undefined>()
   const [error, setError] = useState<string | undefined>()
 
   const onIncreaseNumChange = (input: string) => {
@@ -64,7 +64,7 @@ export const CounterDemo = () => {
       return
     }
     try {
-      setIncreaseNum(checkNumber(input, counterConfig.countDecimals))
+      setIncreaseNum({ raw: input, value: checkNumber(input, counterConfig.countDecimals) })
       setError(undefined)
     } catch (error) {
       setIncreaseNum(undefined)
@@ -79,7 +79,7 @@ export const CounterDemo = () => {
       return
     }
     try {
-      setDecreaseNum(checkNumber(input, counterConfig.countDecimals))
+      setDecreaseNum({ raw: input, value: checkNumber(input, counterConfig.countDecimals) })
       setError(undefined)
     } catch (error) {
       setDecreaseNum(undefined)
@@ -87,35 +87,37 @@ export const CounterDemo = () => {
     }
   }
 
-  const onAddressChange = (input: string) => {
-    if (input === '') {
-      setToAddress(undefined)
-      setError(undefined)
-    } else if (isBase58(input)) {
-      setToAddress(input)
-    } else {
-      setError('Invalid to address')
-    }
-  }
+  // const onAddressChange = (input: string) => {
+  //   if (input === '') {
+  //     setToAddress(undefined)
+  //     setError(undefined)
+  //   } else if (isBase58(input)) {
+  //     setToAddress(input)
+  //   } else {
+  //     setError('Invalid to address')
+  //   }
+  // }
 
   const onIncreaseButtonClick = () => {
     if (context.signerProvider !== undefined && increaseNum !== undefined) {
-      increase(context.signerProvider, increaseNum).then((result) => {
+      increase(context.signerProvider, increaseNum.value).then((result) => {
+        setIncreaseNum(undefined)
         console.log(`increase tx id: ${result.txId}`)
       })
     }
   }
 
   const onDecreaseButtonClick = () => {
-    if (context.signerProvider !== undefined && decreaseNum !== undefined && toAddress !== undefined) {
-      decrease(context.signerProvider, decreaseNum, toAddress).then((result) => {
+    if (context.signerProvider !== undefined && decreaseNum !== undefined && context.account?.address !== undefined) {
+      decrease(context.signerProvider, decreaseNum.value, context.account.address).then((result) => {
+        setDecreaseNum(undefined)
         console.log(`decrease tx id: ${result.txId}`)
       })
     }
   }
 
   const increaseEnabled = context.account && error === undefined && increaseNum !== undefined
-  const decreaseEnabled = context.account && error === undefined && decreaseNum !== undefined && toAddress !== undefined
+  const decreaseEnabled = context.account && error === undefined && decreaseNum !== undefined
 
   return (
     <>
@@ -123,26 +125,28 @@ export const CounterDemo = () => {
         <Input
           placeholder='Enter a number'
           onChange={(e) => onIncreaseNumChange(e.target.value)}
+          value={increaseNum !== undefined ? increaseNum.raw : ''}
         />
         <Button
           onClick={onIncreaseButtonClick}
           disabled={!increaseEnabled}
         >
-          Increase
+          Produce Electricity (kWh)
         </Button>
         <Input
           placeholder='Enter a number'
           onChange={(e) => onDecreaseNumChange(e.target.value)}
+          value={decreaseNum !== undefined ? decreaseNum.raw : ''}
         />
-        <Input
+        {/* <Input
           placeholder='Enter an address'
           onChange={(e) => onAddressChange(e.target.value)}
-        />
+        /> */}
         <Button
           onClick={onDecreaseButtonClick}
           disabled={!decreaseEnabled}
         >
-          Decrease
+          Consume Electricity (kWh)
         </Button>
         {error && <ShowError>{error}</ShowError>}
         <CounterState/>

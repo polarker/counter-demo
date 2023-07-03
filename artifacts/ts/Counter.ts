@@ -143,7 +143,7 @@ export const Counter = new Factory(
   Contract.fromJson(
     CounterContractJson,
     "",
-    "0e84c774e596d3e49f84ddef11547fbe5a164689ed55a4d8b72e3e04e463d4ec"
+    "0c066322165e9654940a30e179ecbc93765e4265b88def01170491f525b5ed0d"
   )
 );
 

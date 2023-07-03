@@ -43,7 +43,7 @@ export const CounterState = () => {
         <Space/>
         {
           currentCount !== undefined
-            ? <StyledText>Current Count: {formatUnits(currentCount.toString(), counterConfig.countDecimals)}</StyledText>
+            ? <StyledText>Electricity available: {formatUnits(currentCount.toString(), counterConfig.countDecimals)} kWh</StyledText>
             : null
         }
       </div>
