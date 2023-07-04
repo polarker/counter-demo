@@ -4,20 +4,22 @@
 
 import { RunScriptResult, DeployContractExecutionResult } from "@alephium/cli";
 import { NetworkId } from "@alephium/web3";
-import { Counter, CounterInstance } from ".";
+import { Electricity, ElectricityInstance } from ".";
 import { default as devnetDeployments } from "../.deployments.devnet.json";
 
 export type Deployments = {
   deployerAddress: string;
-  contracts: { Counter: DeployContractExecutionResult<CounterInstance> };
+  contracts: {
+    Electricity: DeployContractExecutionResult<ElectricityInstance>;
+  };
 };
 
 function toDeployments(json: any): Deployments {
   const contracts = {
-    Counter: {
-      ...json.contracts.Counter,
-      contractInstance: Counter.at(
-        json.contracts.Counter.contractInstance.address
+    Electricity: {
+      ...json.contracts.Electricity,
+      contractInstance: Electricity.at(
+        json.contracts.Electricity.contractInstance.address
       ),
     },
   };

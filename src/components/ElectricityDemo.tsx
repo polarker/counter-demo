@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
-import { increase, decrease, counterConfig } from '@/services/utils'
+import { produce, consume, globalConfig } from '@/utils'
 import { parseUnits } from 'ethers/lib/utils'
 import styled from 'styled-components'
-import { CounterState } from './CounterState'
-import { Address, isBase58 } from '@alephium/web3'
+import { ElectricityState } from './ElectricityState'
 import { EventList } from './Events'
 
 const Input = styled.input`
@@ -50,74 +49,62 @@ function checkNumber(input: string, decimals: number): bigint {
   return result
 }
 
-export const CounterDemo = () => {
+export const ElectricityDemo = () => {
   const context = useAlephiumConnectContext()
-  const [increaseNum, setIncreaseNum] = useState<{ raw: string, value: bigint } | undefined>()
-  const [decreaseNum, setDecreaseNum] = useState<{ raw: string, value: bigint } | undefined>()
-  // const [toAddress, setToAddress] = useState<Address | undefined>()
+  const [produceNum, setProduceNum] = useState<{ raw: string, value: bigint } | undefined>()
+  const [consumeNum, setConsumeNum] = useState<{ raw: string, value: bigint } | undefined>()
   const [error, setError] = useState<string | undefined>()
 
   const onIncreaseNumChange = (input: string) => {
     if (input === '') {
-      setIncreaseNum(undefined)
+      setProduceNum(undefined)
       setError(undefined)
       return
     }
     try {
-      setIncreaseNum({ raw: input, value: checkNumber(input, counterConfig.countDecimals) })
+      setProduceNum({ raw: input, value: checkNumber(input, globalConfig.countDecimals) })
       setError(undefined)
     } catch (error) {
-      setIncreaseNum(undefined)
+      setProduceNum(undefined)
       setError(`${error}`)
     }
   }
 
   const onDecreaseNumChange = (input: string) => {
     if (input === '') {
-      setDecreaseNum(undefined)
+      setConsumeNum(undefined)
       setError(undefined)
       return
     }
     try {
-      setDecreaseNum({ raw: input, value: checkNumber(input, counterConfig.countDecimals) })
+      setConsumeNum({ raw: input, value: checkNumber(input, globalConfig.countDecimals) })
       setError(undefined)
     } catch (error) {
-      setDecreaseNum(undefined)
+      setConsumeNum(undefined)
       setError(`${error}`)
     }
   }
 
-  // const onAddressChange = (input: string) => {
-  //   if (input === '') {
-  //     setToAddress(undefined)
-  //     setError(undefined)
-  //   } else if (isBase58(input)) {
-  //     setToAddress(input)
-  //   } else {
-  //     setError('Invalid to address')
-  //   }
-  // }
-
   const onIncreaseButtonClick = () => {
-    if (context.signerProvider !== undefined && increaseNum !== undefined) {
-      increase(context.signerProvider, increaseNum.value).then((result) => {
-        setIncreaseNum(undefined)
+    if (context.signerProvider !== undefined && produceNum !== undefined) {
+      produce(context.signerProvider, produceNum.value).then((result) => {
+        setProduceNum(undefined)
         console.log(`increase tx id: ${result.txId}`)
       })
     }
   }
 
   const onDecreaseButtonClick = () => {
-    if (context.signerProvider !== undefined && decreaseNum !== undefined && context.account?.address !== undefined) {
-      decrease(context.signerProvider, decreaseNum.value, context.account.address).then((result) => {
-        setDecreaseNum(undefined)
+    if (context.signerProvider !== undefined && consumeNum !== undefined && context.account?.address !== undefined) {
+      consume(context.signerProvider, consumeNum.value).then((result) => {
+        setConsumeNum(undefined)
         console.log(`decrease tx id: ${result.txId}`)
       })
     }
   }
 
-  const increaseEnabled = context.account && error === undefined && increaseNum !== undefined
-  const decreaseEnabled = context.account && error === undefined && decreaseNum !== undefined
+  const increaseEnabled = context.account && error === undefined && produceNum !== undefined
+  const decreaseEnabled = context.account && error === undefined && consumeNum !== undefined
 
   return (
     <>
@@ -125,7 +112,7 @@ export const CounterDemo = () => {
         <Input
           placeholder='Enter a number'
           onChange={(e) => onIncreaseNumChange(e.target.value)}
-          value={increaseNum !== undefined ? increaseNum.raw : ''}
+          value={produceNum !== undefined ? produceNum.raw : ''}
         />
         <Button
           onClick={onIncreaseButtonClick}
@@ -136,12 +123,8 @@ export const CounterDemo = () => {
         <Input
           placeholder='Enter a number'
           onChange={(e) => onDecreaseNumChange(e.target.value)}
-          value={decreaseNum !== undefined ? decreaseNum.raw : ''}
+          value={consumeNum !== undefined ? consumeNum.raw : ''}
         />
-        {/* <Input
-          placeholder='Enter an address'
-          onChange={(e) => onAddressChange(e.target.value)}
-        /> */}
         <Button
           onClick={onDecreaseButtonClick}
           disabled={!decreaseEnabled}
@@ -149,7 +132,7 @@ export const CounterDemo = () => {
           Consume Electricity (kWh)
         </Button>
         {error && <ShowError>{error}</ShowError>}
-        <CounterState/>
+        <ElectricityState/>
         <EventList/>
       </PageContainer>
     </>

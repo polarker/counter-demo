@@ -1,15 +1,14 @@
 {
   "version": "v2.3.5",
-  "name": "Counter",
-  "bytecode": "080809121b4024402d403e406d407d010000000102ce0002010000000102ce0102010000000102131202010000000102ce0202010000000102a00102010001010007a00116002aa1010516005e010102030015a00116002ba1011600ce032c1702b4160113c3038d7ea4c68000a71601b11602ab0616001601160260010001010007b4a000450c7b1600a100",
-  "codeHash": "0c066322165e9654940a30e179ecbc93765e4265b88def01170491f525b5ed0d",
+  "name": "Electricity",
+  "bytecode": "070709121b4024402d40404062010000000102ce0002010000000102ce0102010000000102131202010000000102ce0202010000000102a00002010002020008a00016002aa10005160016015f010202030011a00016002ba1001600ce032c17021601b11602ab0616001601160260",
+  "codeHash": "329997ab7d0666b6d12e76a4c110f6bf334baab5f863a1ad99144d0912e1a795",
   "fieldsSig": {
     "names": [
       "symbol",
       "name",
       "totalSupply",
       "rewardPerReduction",
-      "owner",
       "count",
       "countDecimals",
       "__stdInterfaceId"
@@ -19,7 +18,6 @@
       "ByteVec",
       "U256",
       "U256",
-      "Address",
       "U256",
       "U256",
       "ByteVec"
@@ -30,23 +28,24 @@
       false,
       false,
       true,
-      true,
       false,
       false
     ]
   },
   "eventsSig": [
     {
-      "name": "CountIncreased",
+      "name": "ElectricityProduced",
       "fieldNames": [
-        "num"
+        "num",
+        "from"
       ],
       "fieldTypes": [
-        "U256"
+        "U256",
+        "Address"
       ]
     },
     {
-      "name": "CountDecreased",
+      "name": "ElectricityConsumed",
       "fieldNames": [
         "num",
         "to",
@@ -121,24 +120,27 @@
       ]
     },
     {
-      "name": "increase",
+      "name": "produce",
       "usePreapprovedAssets": false,
       "useAssetsInContract": false,
       "isPublic": true,
       "paramNames": [
-        "num"
+        "num",
+        "from"
       ],
       "paramTypes": [
-        "U256"
+        "U256",
+        "Address"
       ],
       "paramIsMutable": [
+        false,
         false
       ],
       "returnTypes": []
     },
     {
-      "name": "decrease",
-      "usePreapprovedAssets": true,
+      "name": "consume",
+      "usePreapprovedAssets": false,
       "useAssetsInContract": true,
       "isPublic": true,
       "paramNames": [
@@ -154,33 +156,9 @@
         false
       ],
       "returnTypes": []
-    },
-    {
-      "name": "setOwner",
-      "usePreapprovedAssets": false,
-      "useAssetsInContract": false,
-      "isPublic": true,
-      "paramNames": [
-        "newOwner"
-      ],
-      "paramTypes": [
-        "Address"
-      ],
-      "paramIsMutable": [
-        false
-      ],
-      "returnTypes": []
     }
   ],
-  "constants": [
-    {
-      "name": "InvalidCaller",
-      "value": {
-        "type": "U256",
-        "value": "0"
-      }
-    }
-  ],
+  "constants": [],
   "enums": [],
   "stdInterfaceId": "0001"
 }

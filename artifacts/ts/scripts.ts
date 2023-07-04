@@ -11,15 +11,14 @@ import {
   SignerProvider,
   HexString,
 } from "@alephium/web3";
-import { default as DecreaseScriptJson } from "../Decrease.ral.json";
-import { default as IncreaseScriptJson } from "../Increase.ral.json";
+import { default as ConsumeScriptJson } from "../Consume.ral.json";
+import { default as ProduceScriptJson } from "../Produce.ral.json";
 
-export const Decrease = new ExecutableScript<{
-  counter: HexString;
+export const Consume = new ExecutableScript<{
+  electricity: HexString;
   num: bigint;
-  to: Address;
-}>(Script.fromJson(DecreaseScriptJson));
-export const Increase = new ExecutableScript<{
-  counter: HexString;
+}>(Script.fromJson(ConsumeScriptJson));
+export const Produce = new ExecutableScript<{
+  electricity: HexString;
   num: bigint;
-}>(Script.fromJson(IncreaseScriptJson));
+}>(Script.fromJson(ProduceScriptJson));

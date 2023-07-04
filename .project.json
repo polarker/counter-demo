@@ -9,30 +9,30 @@
     "ignoreCheckExternalCallerWarnings": false
   },
   "infos": {
-    "Counter": {
-      "sourceFile": "counter.ral",
-      "sourceCodeHash": "47bc80a353f1eeb931f7235f8fd54e5c1e4092847c88f1fdc5b4ec88a1c3e73e",
-      "bytecodeDebugPatch": "",
-      "codeHashDebug": "0c066322165e9654940a30e179ecbc93765e4265b88def01170491f525b5ed0d",
-      "warnings": []
-    },
-    "Decrease": {
-      "sourceFile": "decrease.ral",
-      "sourceCodeHash": "de1a5a5ee55bef87fd2e29849022a9ccc56b0515affc47bbd6135b09381ab74d",
+    "Consume": {
+      "sourceFile": "consume.ral",
+      "sourceCodeHash": "2f98f82d032255c820da461f616f5c2d75d3029db427425d4f07c41b26d6b326",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
+    "Electricity": {
+      "sourceFile": "electricity.ral",
+      "sourceCodeHash": "f53e99799e5c143c9eddad813dbb8ef6ce866e7c26163b8c63470b312d827cea",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "329997ab7d0666b6d12e76a4c110f6bf334baab5f863a1ad99144d0912e1a795",
+      "warnings": []
+    },
     "IFungibleToken": {
-      "sourceFile": "../../../../.npm/_npx/f1b120e1b513c04c/node_modules/@alephium/web3/std/fungible_token_interface.ral",
+      "sourceFile": "../node_modules/@alephium/web3/std/fungible_token_interface.ral",
       "sourceCodeHash": "6809cb06fb20fa7edf529461998beeebd12b1636d439612cca2f84214dbf4a20",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
-    "Increase": {
-      "sourceFile": "increase.ral",
-      "sourceCodeHash": "a4933580f6592c2361e1638124f3110cff699cf0310ac24ad61891808bb5b812",
+    "Produce": {
+      "sourceFile": "produce.ral",
+      "sourceCodeHash": "9768f3dabbff8cfb7d3e4cf07a0bec40086bce512b408e50dd9c9cb4be4ecb42",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []

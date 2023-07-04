@@ -1,0 +1,49 @@
+import "std/fungible_token_interface"
+
+Contract Electricity(
+  symbol: ByteVec,
+  name: ByteVec,
+  totalSupply: U256,
+  rewardPerReduction: U256,
+  mut count: U256,
+  @unused countDecimals: U256
+) implements IFungibleToken {
+  event ElectricityProduced(num: U256, from: Address)
+  event ElectricityConsumed(num: U256, to: Address, rewardAmount: U256)
+
+  pub fn getSymbol() -> ByteVec {
+    return symbol
+  }
+
+  pub fn getName() -> ByteVec {
+    return name
+  }
+
+  pub fn getDecimals() -> U256 {
+    return 18
+  }
+
+  pub fn getTotalSupply() -> U256 {
+    return totalSupply
+  }
+
+  pub fn getCurrentCount() -> U256 {
+    return count
+  }
+
+  @using(updateFields = true, checkExternalCaller = false)
+  pub fn produce(num: U256, from: Address) -> () {
+    count = count + num
+    emit ElectricityProduced(num, from)
+  }
+
+  @using(updateFields = true, assetsInContract = true, checkExternalCaller = false)
+  pub fn consume(num: U256, to: Address) -> () {
+    count = count - num
+
+    let rewardAmount = num * rewardPerReduction
+    transferTokenFromSelf!(to, selfTokenId!(), rewardAmount)
+
+    emit ElectricityConsumed(num, to, rewardAmount)
+  }
+}

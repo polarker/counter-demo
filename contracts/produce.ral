@@ -1,0 +1,4 @@
+@using(preapprovedAssets = false)
+TxScript Produce(electricity: Electricity, num: U256) {
+  electricity.produce(num, callerAddress!())
+}

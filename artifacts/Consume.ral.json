@@ -1,20 +1,17 @@
 {
   "version": "v2.3.5",
-  "name": "Decrease",
-  "bytecodeTemplate": "01010300000009b413c3038d7ea4c68000a2{1}{2}0e0c{0}0106",
+  "name": "Consume",
+  "bytecodeTemplate": "01010300000006{1}b40e0c{0}0106",
   "fieldsSig": {
     "names": [
-      "counter",
-      "num",
-      "to"
+      "electricity",
+      "num"
     ],
     "types": [
       "ByteVec",
-      "U256",
-      "Address"
+      "U256"
     ],
     "isMutable": [
-      false,
       false,
       false
     ]

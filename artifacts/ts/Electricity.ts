@@ -24,25 +24,27 @@ import {
   ContractInstance,
   getContractEventsCurrentCount,
 } from "@alephium/web3";
-import { default as CounterContractJson } from "../Counter.ral.json";
+import { default as ElectricityContractJson } from "../Electricity.ral.json";
 import { getContractByCodeHash } from "./contracts";
 
 // Custom types for the contract
-export namespace CounterTypes {
+export namespace ElectricityTypes {
   export type Fields = {
     symbol: HexString;
     name: HexString;
     totalSupply: bigint;
     rewardPerReduction: bigint;
-    owner: Address;
     count: bigint;
     countDecimals: bigint;
   };
 
   export type State = ContractState<Fields>;
 
-  export type CountIncreasedEvent = ContractEvent<{ num: bigint }>;
-  export type CountDecreasedEvent = ContractEvent<{
+  export type ElectricityProducedEvent = ContractEvent<{
+    num: bigint;
+    from: Address;
+  }>;
+  export type ElectricityConsumedEvent = ContractEvent<{
     num: bigint;
     to: Address;
     rewardAmount: bigint;
@@ -84,124 +86,144 @@ export namespace CounterTypes {
   };
 }
 
-class Factory extends ContractFactory<CounterInstance, CounterTypes.Fields> {
-  consts = { InvalidCaller: BigInt(0) };
-
-  at(address: string): CounterInstance {
-    return new CounterInstance(address);
+class Factory extends ContractFactory<
+  ElectricityInstance,
+  ElectricityTypes.Fields
+> {
+  at(address: string): ElectricityInstance {
+    return new ElectricityInstance(address);
   }
 
   tests = {
     getSymbol: async (
-      params: Omit<TestContractParams<CounterTypes.Fields, never>, "testArgs">
+      params: Omit<
+        TestContractParams<ElectricityTypes.Fields, never>,
+        "testArgs"
+      >
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "getSymbol", params);
     },
     getName: async (
-      params: Omit<TestContractParams<CounterTypes.Fields, never>, "testArgs">
+      params: Omit<
+        TestContractParams<ElectricityTypes.Fields, never>,
+        "testArgs"
+      >
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "getName", params);
     },
     getDecimals: async (
-      params: Omit<TestContractParams<CounterTypes.Fields, never>, "testArgs">
+      params: Omit<
+        TestContractParams<ElectricityTypes.Fields, never>,
+        "testArgs"
+      >
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getDecimals", params);
     },
     getTotalSupply: async (
-      params: Omit<TestContractParams<CounterTypes.Fields, never>, "testArgs">
+      params: Omit<
+        TestContractParams<ElectricityTypes.Fields, never>,
+        "testArgs"
+      >
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getTotalSupply", params);
     },
     getCurrentCount: async (
-      params: Omit<TestContractParams<CounterTypes.Fields, never>, "testArgs">
+      params: Omit<
+        TestContractParams<ElectricityTypes.Fields, never>,
+        "testArgs"
+      >
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getCurrentCount", params);
     },
-    increase: async (
-      params: TestContractParams<CounterTypes.Fields, { num: bigint }>
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "increase", params);
-    },
-    decrease: async (
+    produce: async (
       params: TestContractParams<
-        CounterTypes.Fields,
+        ElectricityTypes.Fields,
+        { num: bigint; from: Address }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "produce", params);
+    },
+    consume: async (
+      params: TestContractParams<
+        ElectricityTypes.Fields,
         { num: bigint; to: Address }
       >
     ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "decrease", params);
-    },
-    setOwner: async (
-      params: TestContractParams<CounterTypes.Fields, { newOwner: Address }>
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "setOwner", params);
+      return testMethod(this, "consume", params);
     },
   };
 }
 
 // Use this object to test and deploy the contract
-export const Counter = new Factory(
+export const Electricity = new Factory(
   Contract.fromJson(
-    CounterContractJson,
+    ElectricityContractJson,
     "",
-    "0c066322165e9654940a30e179ecbc93765e4265b88def01170491f525b5ed0d"
+    "329997ab7d0666b6d12e76a4c110f6bf334baab5f863a1ad99144d0912e1a795"
   )
 );
 
 // Use this class to interact with the blockchain
-export class CounterInstance extends ContractInstance {
+export class ElectricityInstance extends ContractInstance {
   constructor(address: Address) {
     super(address);
   }
 
-  async fetchState(): Promise<CounterTypes.State> {
-    return fetchContractState(Counter, this);
+  async fetchState(): Promise<ElectricityTypes.State> {
+    return fetchContractState(Electricity, this);
   }
 
   async getContractEventsCurrentCount(): Promise<number> {
     return getContractEventsCurrentCount(this.address);
   }
 
-  subscribeCountIncreasedEvent(
-    options: SubscribeOptions<CounterTypes.CountIncreasedEvent>,
+  subscribeElectricityProducedEvent(
+    options: SubscribeOptions<ElectricityTypes.ElectricityProducedEvent>,
     fromCount?: number
   ): EventSubscription {
     return subscribeContractEvent(
-      Counter.contract,
+      Electricity.contract,
       this,
       options,
-      "CountIncreased",
+      "ElectricityProduced",
       fromCount
     );
   }
 
-  subscribeCountDecreasedEvent(
-    options: SubscribeOptions<CounterTypes.CountDecreasedEvent>,
+  subscribeElectricityConsumedEvent(
+    options: SubscribeOptions<ElectricityTypes.ElectricityConsumedEvent>,
     fromCount?: number
   ): EventSubscription {
     return subscribeContractEvent(
-      Counter.contract,
+      Electricity.contract,
       this,
       options,
-      "CountDecreased",
+      "ElectricityConsumed",
       fromCount
     );
   }
 
   subscribeAllEvents(
     options: SubscribeOptions<
-      CounterTypes.CountIncreasedEvent | CounterTypes.CountDecreasedEvent
+      | ElectricityTypes.ElectricityProducedEvent
+      | ElectricityTypes.ElectricityConsumedEvent
     >,
     fromCount?: number
   ): EventSubscription {
-    return subscribeContractEvents(Counter.contract, this, options, fromCount);
+    return subscribeContractEvents(
+      Electricity.contract,
+      this,
+      options,
+      fromCount
+    );
   }
 
   methods = {
     getSymbol: async (
-      params?: CounterTypes.CallMethodParams<"getSymbol">
-    ): Promise<CounterTypes.CallMethodResult<"getSymbol">> => {
+      params?: ElectricityTypes.CallMethodParams<"getSymbol">
+    ): Promise<ElectricityTypes.CallMethodResult<"getSymbol">> => {
       return callMethod(
-        Counter,
+        Electricity,
         this,
         "getSymbol",
         params === undefined ? {} : params,
@@ -209,10 +231,10 @@ export class CounterInstance extends ContractInstance {
       );
     },
     getName: async (
-      params?: CounterTypes.CallMethodParams<"getName">
-    ): Promise<CounterTypes.CallMethodResult<"getName">> => {
+      params?: ElectricityTypes.CallMethodParams<"getName">
+    ): Promise<ElectricityTypes.CallMethodResult<"getName">> => {
       return callMethod(
-        Counter,
+        Electricity,
         this,
         "getName",
         params === undefined ? {} : params,
@@ -220,10 +242,10 @@ export class CounterInstance extends ContractInstance {
       );
     },
     getDecimals: async (
-      params?: CounterTypes.CallMethodParams<"getDecimals">
-    ): Promise<CounterTypes.CallMethodResult<"getDecimals">> => {
+      params?: ElectricityTypes.CallMethodParams<"getDecimals">
+    ): Promise<ElectricityTypes.CallMethodResult<"getDecimals">> => {
       return callMethod(
-        Counter,
+        Electricity,
         this,
         "getDecimals",
         params === undefined ? {} : params,
@@ -231,10 +253,10 @@ export class CounterInstance extends ContractInstance {
       );
     },
     getTotalSupply: async (
-      params?: CounterTypes.CallMethodParams<"getTotalSupply">
-    ): Promise<CounterTypes.CallMethodResult<"getTotalSupply">> => {
+      params?: ElectricityTypes.CallMethodParams<"getTotalSupply">
+    ): Promise<ElectricityTypes.CallMethodResult<"getTotalSupply">> => {
       return callMethod(
-        Counter,
+        Electricity,
         this,
         "getTotalSupply",
         params === undefined ? {} : params,
@@ -242,10 +264,10 @@ export class CounterInstance extends ContractInstance {
       );
     },
     getCurrentCount: async (
-      params?: CounterTypes.CallMethodParams<"getCurrentCount">
-    ): Promise<CounterTypes.CallMethodResult<"getCurrentCount">> => {
+      params?: ElectricityTypes.CallMethodParams<"getCurrentCount">
+    ): Promise<ElectricityTypes.CallMethodResult<"getCurrentCount">> => {
       return callMethod(
-        Counter,
+        Electricity,
         this,
         "getCurrentCount",
         params === undefined ? {} : params,
@@ -254,14 +276,14 @@ export class CounterInstance extends ContractInstance {
     },
   };
 
-  async multicall<Calls extends CounterTypes.MultiCallParams>(
+  async multicall<Calls extends ElectricityTypes.MultiCallParams>(
     calls: Calls
-  ): Promise<CounterTypes.MultiCallResults<Calls>> {
+  ): Promise<ElectricityTypes.MultiCallResults<Calls>> {
     return (await multicallMethods(
-      Counter,
+      Electricity,
       this,
       calls,
       getContractByCodeHash
-    )) as CounterTypes.MultiCallResults<Calls>;
+    )) as ElectricityTypes.MultiCallResults<Calls>;
   }
 }

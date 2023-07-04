@@ -1,0 +1,3 @@
+TxScript Consume(electricity: Electricity, num: U256) {
+  electricity.consume(num, callerAddress!())
+}

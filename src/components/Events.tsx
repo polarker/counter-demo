@@ -1,5 +1,5 @@
-import { counterConfig } from "@/services/utils";
-import { CounterTypes } from "artifacts/ts";
+import { globalConfig } from "@/utils";
+import { ElectricityTypes } from "artifacts/ts";
 import { useEffect, useState } from "react";
 import { EventSubscription, SubscribeOptions } from "@alephium/web3";
 import styled from "styled-components";
@@ -11,9 +11,9 @@ const List = styled.ul`
   margin: 0;
 `
 
-type EventType = CounterTypes.CountIncreasedEvent | CounterTypes.CountDecreasedEvent
+type EventType = ElectricityTypes.ElectricityProducedEvent | ElectricityTypes.ElectricityConsumedEvent
 
-function useCounterEvent(): {
+function useElectricityEvent(): {
   subscription: EventSubscription | undefined
   events: EventType[]
 } {
@@ -22,7 +22,7 @@ function useCounterEvent(): {
 
   useEffect(() => {
     const subscribeOptions: SubscribeOptions<EventType> = {
-      pollingInterval: counterConfig.pollingInterval,
+      pollingInterval: globalConfig.pollingInterval,
       messageCallback: (event) => {
         setEvents((current) => [...current, event])
         return Promise.resolve()
@@ -33,7 +33,7 @@ function useCounterEvent(): {
         return Promise.resolve()
       }
     }
-    const subscription = counterConfig.counter.subscribeAllEvents(subscribeOptions)
+    const subscription = globalConfig.electricity.subscribeAllEvents(subscribeOptions)
     setSubscription((previous) => {
       if (previous !== undefined) previous.unsubscribe()
       return subscription
@@ -44,24 +44,19 @@ function useCounterEvent(): {
 }
 
 function formatEvent(event: EventType): string {
-  const num = formatUnits(event.fields.num, counterConfig.countDecimals)
-  // const eventName = event.name === 'CountIncreased' ? 'ElectricityProduced' : 'ElectricityConsumed'
-  // const fields = event.name === 'CountIncreased'
-  //   ? { ...event.fields, num }
-  //   : { ...event.fields, num, rewardAmount: formatUnits((event as CounterTypes.CountDecreasedEvent).fields.rewardAmount, 18) }
-  // return `Event: ${eventName}, fields: ${JSON.stringify(fields)}`
+  const num = formatUnits(event.fields.num, globalConfig.countDecimals)
   switch (event.name) {
-    case 'CountIncreased':
+    case 'ElectricityProduced':
       return `ElectricityProduced: ${num} kWh`
-    case 'CountDecreased':
-      return `ElectricityConsumed: ${num} kWh, rewardAmount: ${formatUnits((event as CounterTypes.CountDecreasedEvent).fields.rewardAmount, 18)} ALPH`
+    case 'ElectricityConsumed':
+      return `ElectricityConsumed: ${num} kWh, rewardAmount: ${formatUnits((event as ElectricityTypes.ElectricityConsumedEvent).fields.rewardAmount, 18)} ${globalConfig.tokenSymbol}`
     default:
       return ``
   }
 }
 
 export const EventList = () => {
-  const { events } = useCounterEvent()
+  const { events } = useElectricityEvent()
 
   return (
     <List>

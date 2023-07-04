@@ -1,6 +1,4 @@
 import { Configuration } from '@alephium/cli'
-import { Address } from '@alephium/web3'
-import { testAddress } from '@alephium/web3-test'
 
 export type Settings = {
   tokenSymbol: string,
@@ -8,18 +6,16 @@ export type Settings = {
   totalSupply: bigint,
   rewardPerReduction: bigint
 
-  countDecimals: number,
-  owner: Address
+  countDecimals: number
 }
 
 const devnetSettings: Settings = {
-  tokenSymbol: 'CounterToken',
-  tokenName: 'CT',
+  tokenSymbol: 'ElectricityToken',
+  tokenName: 'ET',
   totalSupply: 1n << 255n,
   rewardPerReduction: (10n ** 18n) / (100n * (10n ** 9n)), // the decimals of the token is 18, reward 1 token for every decrease of 100
 
-  countDecimals: 9,
-  owner: testAddress
+  countDecimals: 9
 }
 
 const configuration: Configuration<Settings> = {

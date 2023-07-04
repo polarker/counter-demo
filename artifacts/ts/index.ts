@@ -2,5 +2,5 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export * from "./Counter";
+export * from "./Electricity";
 export * from "./scripts";

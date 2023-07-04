@@ -1,6 +1,6 @@
 import Head from 'next/head'
-import { CounterDemo } from '@/components/CounterDemo'
-import { AlephiumConnectButton, useAccount } from '@alephium/web3-react'
+import { ElectricityDemo } from '@/components/ElectricityDemo'
+import { AlephiumConnectButton } from '@alephium/web3-react'
 
 export default function Home() {
   return (
@@ -8,13 +8,13 @@ export default function Home() {
       <div>
         <AlephiumConnectButton />
         <Head>
-          <title>Counter Demo</title>
-          <meta name="description" content="Counter Demo" />
+          <title>Electricity Demo</title>
+          <meta name="description" content="Electricity Demo" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <CounterDemo/>
+        <ElectricityDemo/>
       </div>
     </>
   )
