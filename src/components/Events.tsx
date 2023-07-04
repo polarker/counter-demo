@@ -3,7 +3,6 @@ import { Electricity, ElectricityTypes } from "artifacts/ts";
 import { web3, explorer, fromApiVals } from "@alephium/web3";
 import { DefaultPageSize, PageSwitch } from "./PageSwitch";
 import { useEffect, useState } from "react";
-import { useBlockNumber } from "@/hooks/useBlockNumber";
 import { useSnackbar } from "notistack";
 import styled from "styled-components";
 import ListEvents from "./ListEvents";
@@ -38,33 +37,22 @@ async function getEvents(page: number): Promise<EventType[]> {
 }
 
 export const EventList = () => {
-  const [isLoading, setIsLoading] = useState(true)
   const [currentEvents, setCurrentEvents] = useState<EventType[]>([])
   const [pageNumber, setPageNumber] = useState<number>(1)
-  const { data: blockNumber } = useBlockNumber()
   const { enqueueSnackbar } = useSnackbar()
 
   useEffect(() => {
-    if (blockNumber === undefined) {
-      return
-    }
-
-    const fetch = async () => {
-      setIsLoading(true)
+    const interval = setInterval(async () => {
       try {
         const events = await getEvents(pageNumber)
         setCurrentEvents(events)
-        setIsLoading(false)
       } catch (error) {
-        setIsLoading(false)
         enqueueSnackbar(`Failed to get events, error: ${error}`, { persist: true, variant: 'error' })
-        console.error(`failed to get events, error: ${error}`)
       }
-    }
+    }, globalConfig.pollingInterval)
 
-    fetch()
-
-  }, [pageNumber, blockNumber, enqueueSnackbar])
+    return () => { clearInterval(interval) }
+  }, [pageNumber, enqueueSnackbar])
 
   return (
     <Container>

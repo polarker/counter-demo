@@ -1,8 +1,8 @@
 import { Configuration } from '@alephium/cli'
 
 export type Settings = {
-  tokenSymbol: string
   tokenName: string
+  tokenSymbol: string
   totalSupply: bigint
   rewardPerReduction: bigint
   countDecimals: number
@@ -10,8 +10,8 @@ export type Settings = {
 }
 
 const devnetSettings: Settings = {
-  tokenSymbol: 'ElectricityToken',
-  tokenName: 'ET',
+  tokenName: 'ElectricityToken',
+  tokenSymbol: 'ET',
   totalSupply: 1n << 255n,
   rewardPerReduction: (10n ** 18n) / (100n * (10n ** 9n)), // the decimals of the token is 18, reward 1 token for every decrease of 100
   countDecimals: 9,
