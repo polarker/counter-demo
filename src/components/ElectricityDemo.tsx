@@ -56,43 +56,43 @@ function checkNumber(input: string, decimals: number): bigint {
 
 export const ElectricityDemo = () => {
   const context = useAlephiumConnectContext()
-  const [produceNum, setProduceNum] = useState<{ raw: string, value: bigint } | undefined>()
-  const [consumeNum, setConsumeNum] = useState<{ raw: string, value: bigint } | undefined>()
+  const [produceNum, setProduceNum] = useState<string | undefined>()
+  const [consumeNum, setConsumeNum] = useState<string | undefined>()
   const [error, setError] = useState<string | undefined>()
 
-  const onIncreaseNumChange = (input: string) => {
+  const onProduceNumChange = (input: string) => {
     if (input === '') {
       setProduceNum(undefined)
       setError(undefined)
       return
     }
     try {
-      setProduceNum({ raw: input, value: checkNumber(input, globalConfig.countDecimals) })
+      setProduceNum(input)
+      checkNumber(input, globalConfig.countDecimals)
       setError(undefined)
     } catch (error) {
-      setProduceNum(undefined)
       setError(`${error}`)
     }
   }
 
-  const onDecreaseNumChange = async (input: string) => {
+  const onConsumeNumChange = async (input: string) => {
     if (input === '') {
       setConsumeNum(undefined)
       setError(undefined)
       return
     }
     try {
-      setConsumeNum({ raw: input, value: checkNumber(input, globalConfig.countDecimals) })
+      setConsumeNum(input)
+      checkNumber(input, globalConfig.countDecimals)
       setError(undefined)
     } catch (error) {
-      setConsumeNum(undefined)
       setError(`${error}`)
     }
   }
 
   const onIncreaseButtonClick = () => {
     if (context.signerProvider !== undefined && produceNum !== undefined) {
-      produce(context.signerProvider, produceNum.value).then((result) => {
+      produce(context.signerProvider, checkNumber(produceNum, globalConfig.countDecimals)).then((result) => {
         setProduceNum(undefined)
         console.log(`increase tx id: ${result.txId}`)
       })
@@ -101,7 +101,7 @@ export const ElectricityDemo = () => {
 
   const onDecreaseButtonClick = () => {
     if (context.signerProvider !== undefined && consumeNum !== undefined && context.account?.address !== undefined) {
-      consume(context.signerProvider, consumeNum.value).then((result) => {
+      consume(context.signerProvider, checkNumber(consumeNum, globalConfig.countDecimals)).then((result) => {
         setConsumeNum(undefined)
         console.log(`decrease tx id: ${result.txId}`)
       })
@@ -117,8 +117,8 @@ export const ElectricityDemo = () => {
         <InputContainer>
           <Input
             placeholder='Enter a number'
-            onChange={(e) => onIncreaseNumChange(e.target.value)}
-            value={produceNum !== undefined ? produceNum.raw : ''}
+            onChange={(e) => onProduceNumChange(e.target.value)}
+            value={produceNum !== undefined ? produceNum : ''}
           />
           <Button
             onClick={onIncreaseButtonClick}
@@ -128,8 +128,8 @@ export const ElectricityDemo = () => {
           </Button>
           <Input
             placeholder='Enter a number'
-            onChange={(e) => onDecreaseNumChange(e.target.value)}
-            value={consumeNum !== undefined ? consumeNum.raw : ''}
+            onChange={(e) => onConsumeNumChange(e.target.value)}
+            value={consumeNum !== undefined ? consumeNum : ''}
           />
           <Button
             onClick={onDecreaseButtonClick}
