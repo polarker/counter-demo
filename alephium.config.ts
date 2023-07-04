@@ -10,12 +10,21 @@ export type Settings = {
 }
 
 const devnetSettings: Settings = {
-  tokenName: 'ElectricityToken',
-  tokenSymbol: 'ET',
+  tokenName: 'Beer Token',
+  tokenSymbol: 'BT',
   totalSupply: 1n << 255n,
   rewardPerReduction: (10n ** 18n) / (100n * (10n ** 9n)), // the decimals of the token is 18, reward 1 token for every decrease of 100
   countDecimals: 9,
   explorerUrl: 'http://localhost:9090'
+}
+
+const testnetSetting: Settings = {
+  tokenName: 'Beer Token',
+  tokenSymbol: 'BT',
+  totalSupply: 1n << 255n,
+  rewardPerReduction: (10n ** 18n) / (100n * (10n ** 9n)), // the decimals of the token is 18, reward 1 token for every decrease of 100
+  countDecimals: 9,
+  explorerUrl: 'https://backend-v113.testnet.alephium.org'
 }
 
 const configuration: Configuration<Settings> = {
@@ -29,7 +38,7 @@ const configuration: Configuration<Settings> = {
     testnet: {
       nodeUrl: (process.env.NODE_URL as string) ?? 'https://wallet-v20.testnet.alephium.org',
       privateKeys: process.env.PRIVATE_KEYS === undefined ? [] : process.env.PRIVATE_KEYS.split(','),
-      settings: undefined as any as Settings
+      settings: testnetSetting
     },
 
     mainnet: {

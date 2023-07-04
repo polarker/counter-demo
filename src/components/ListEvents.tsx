@@ -49,7 +49,7 @@ function Row({ event } : { event: EventType }) {
             <TableCell align="center"><Link text={consumeEvent.fields.to} type={'addresses'}/></TableCell>
             <TableCell align="center">{consumeEvent.name}</TableCell>
             <TableCell align="center">{formatUnits(consumeEvent.fields.num, globalConfig.countDecimals)} kWh</TableCell>
-            <TableCell align="center">{formatUnits(consumeEvent.fields.rewardAmount, 18)} {globalConfig.tokenSymbol}</TableCell>
+            <TableCell align="center">{formatUnits(consumeEvent.fields.rewardAmount, 18)} {globalConfig.tokenName}</TableCell>
           </TableRow>
         </React.Fragment>
       )

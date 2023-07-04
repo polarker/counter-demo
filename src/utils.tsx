@@ -5,6 +5,7 @@ import { loadDeployments } from '../artifacts/ts/deployments'
 
 export interface Config {
   network: NetworkId
+  tokenName: string
   tokenSymbol: string
   groupIndex: number
   countDecimals: number
@@ -22,11 +23,12 @@ function getConfig(): Config {
   const groupIndex = electricity.groupIndex
   const networkConfig = configuration.networks[network]
   const countDecimals = networkConfig.settings.countDecimals
+  const tokenName = networkConfig.settings.tokenName
   const tokenSymbol = networkConfig.settings.tokenSymbol
   web3.setCurrentNodeProvider(networkConfig.nodeUrl)
   web3.setCurrentExplorerProvider(networkConfig.settings.explorerUrl)
   const pollingInterval = network === 'devnet' ? 1000 : 10000
-  return { network, tokenSymbol, groupIndex, countDecimals, electricity, pollingInterval }
+  return { network, tokenName, tokenSymbol, groupIndex, countDecimals, electricity, pollingInterval }
 }
 
 export const globalConfig = getConfig()
