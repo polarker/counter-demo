@@ -1,9 +1,10 @@
 name: GitHub Pages
 
 on:
+  workflow_dispatch:
   push:
     branches:
-      - main
+      - master
   pull_request:
 
 jobs:
@@ -20,18 +21,11 @@ jobs:
           node-version: "16"
           cache: "npm"
 
-      - run: npm ci
-      - run: |
-          echo 'module.exports.basePath = "/nextjs-template"' >> next.config.js
-      - run: npm run testnet:build
-        env:
-          UPLOAD_SENTRY_SOURCEMAPS: false
-
-      - run: npm run export
+      - run: npm ci && npm run testnet:build && npm run export
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
-        if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref == 'refs/heads/master' }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: out
