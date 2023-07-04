@@ -25,10 +25,15 @@ const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 100vh;
 `
 
+const InputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+`
+ 
 const Button = styled.button`
   margin-top: 10px;
   margin-bottom: 10px;
@@ -77,12 +82,7 @@ export const ElectricityDemo = () => {
       return
     }
     try {
-      const currentCount = (await globalConfig.electricity.fetchState()).fields.count
-      const value = checkNumber(input, globalConfig.countDecimals)
-      if (value < currentCount) {
-        throw new Error(`not enough electricity available`)
-      }
-      setConsumeNum({ raw: input, value })
+      setConsumeNum({ raw: input, value: checkNumber(input, globalConfig.countDecimals) })
       setError(undefined)
     } catch (error) {
       setConsumeNum(undefined)
@@ -114,30 +114,32 @@ export const ElectricityDemo = () => {
   return (
     <>
       <PageContainer>
-        <Input
-          placeholder='Enter a number'
-          onChange={(e) => onIncreaseNumChange(e.target.value)}
-          value={produceNum !== undefined ? produceNum.raw : ''}
-        />
-        <Button
-          onClick={onIncreaseButtonClick}
-          disabled={!increaseEnabled}
-        >
-          Produce Electricity (kWh)
-        </Button>
-        <Input
-          placeholder='Enter a number'
-          onChange={(e) => onDecreaseNumChange(e.target.value)}
-          value={consumeNum !== undefined ? consumeNum.raw : ''}
-        />
-        <Button
-          onClick={onDecreaseButtonClick}
-          disabled={!decreaseEnabled}
-        >
-          Consume Electricity (kWh)
-        </Button>
-        {error && <ShowError>{error}</ShowError>}
-        <ElectricityState/>
+        <InputContainer>
+          <Input
+            placeholder='Enter a number'
+            onChange={(e) => onIncreaseNumChange(e.target.value)}
+            value={produceNum !== undefined ? produceNum.raw : ''}
+          />
+          <Button
+            onClick={onIncreaseButtonClick}
+            disabled={!increaseEnabled}
+          >
+            Produce Electricity (kWh)
+          </Button>
+          <Input
+            placeholder='Enter a number'
+            onChange={(e) => onDecreaseNumChange(e.target.value)}
+            value={consumeNum !== undefined ? consumeNum.raw : ''}
+          />
+          <Button
+            onClick={onDecreaseButtonClick}
+            disabled={!decreaseEnabled}
+          >
+            Consume Electricity (kWh)
+          </Button>
+          {error && <ShowError>{error}</ShowError>}
+          <ElectricityState/>
+        </InputContainer>
         <EventList/>
       </PageContainer>
     </>

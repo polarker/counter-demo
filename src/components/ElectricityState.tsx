@@ -1,35 +1,11 @@
+import { useBlockNumber } from '@/hooks/useBlockNumber'
 import { globalConfig } from '@/utils'
-import { web3 } from '@alephium/web3'
 import { formatUnits } from 'ethers/lib/utils'
 import { useEffect, useState } from 'react'
-import styled from 'styled-components'
-import useSWR from 'swr'
-
-const StyledText = styled.p`
-  text-align: center;
-  font-size: 1.4rem;
-`
-
-const Space = styled.div`
-  flex: 1,
-  width: 100vw,
-`
 
 export const ElectricityState = () => {
   const [currentCount, setCurrentCount] = useState<bigint | undefined>()
-
-  const { data: blockNumber } = useSWR(
-    'block-number',
-    () => {
-      return web3.getCurrentNodeProvider().blockflow
-        .getBlockflowChainInfo({
-          fromGroup: globalConfig.groupIndex,
-          toGroup: globalConfig.groupIndex
-        })
-        .then((chainInfo) => chainInfo.currentHeight)
-    },
-    { refreshInterval: globalConfig.pollingInterval }
-  )
+  const { data: blockNumber } = useBlockNumber()
 
   useEffect(() => {
     if (blockNumber !== undefined) {
@@ -40,10 +16,11 @@ export const ElectricityState = () => {
   return (
     <>
       <div>
-        <Space/>
         {
           currentCount !== undefined
-            ? <StyledText>Electricity available: {formatUnits(currentCount.toString(), globalConfig.countDecimals)} kWh</StyledText>
+            ? <span style={{textAlign: 'center', fontSize: '1.4rem', marginTop: '20px'}}>
+                Electricity available: {formatUnits(currentCount.toString(), globalConfig.countDecimals)} kWh
+              </span>
             : null
         }
       </div>

@@ -24,6 +24,7 @@ function getConfig(): Config {
   const countDecimals = networkConfig.settings.countDecimals
   const tokenSymbol = networkConfig.settings.tokenSymbol
   web3.setCurrentNodeProvider(networkConfig.nodeUrl)
+  web3.setCurrentExplorerProvider(networkConfig.settings.explorerUrl)
   const pollingInterval = network === 'devnet' ? 1000 : 10000
   return { network, tokenSymbol, groupIndex, countDecimals, electricity, pollingInterval }
 }

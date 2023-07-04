@@ -1,68 +1,87 @@
 import { globalConfig } from "@/utils";
-import { ElectricityTypes } from "artifacts/ts";
+import { Electricity, ElectricityTypes } from "artifacts/ts";
+import { web3, explorer, fromApiVals } from "@alephium/web3";
+import { DefaultPageSize, PageSwitch } from "./PageSwitch";
 import { useEffect, useState } from "react";
-import { EventSubscription, SubscribeOptions } from "@alephium/web3";
+import { useBlockNumber } from "@/hooks/useBlockNumber";
+import { useSnackbar } from "notistack";
 import styled from "styled-components";
-import { formatUnits } from "ethers/lib/utils";
+import ListEvents from "./ListEvents";
 
-const List = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin: 0;
-`
+export type EventType = ElectricityTypes.ElectricityProducedEvent | ElectricityTypes.ElectricityConsumedEvent
 
-type EventType = ElectricityTypes.ElectricityProducedEvent | ElectricityTypes.ElectricityConsumedEvent
-
-function useElectricityEvent(): {
-  subscription: EventSubscription | undefined
-  events: EventType[]
-} {
-  const [events, setEvents] = useState<EventType[]>([])
-  const [subscription, setSubscription] = useState<EventSubscription | undefined>(undefined)
-
-  useEffect(() => {
-    const subscribeOptions: SubscribeOptions<EventType> = {
-      pollingInterval: globalConfig.pollingInterval,
-      messageCallback: (event) => {
-        setEvents((current) => [...current, event])
-        return Promise.resolve()
-      },
-      errorCallback: (err, subscription) => {
-        console.error(`subscription error: ${err}`)
-        subscription.unsubscribe()
-        return Promise.resolve()
-      }
-    }
-    const subscription = globalConfig.electricity.subscribeAllEvents(subscribeOptions)
-    setSubscription((previous) => {
-      if (previous !== undefined) previous.unsubscribe()
-      return subscription
-    })
-  }, [])
-
-  return { subscription, events }
+function toElectricityEvent(event: explorer.Event): EventType | undefined {
+  const eventSig = Electricity.contract.eventsSig[event.eventIndex]
+  if (event.fields === undefined || event.fields.length !== eventSig.fieldNames.length) {
+    console.error(`invalid event: ${JSON.stringify(event)}`)
+    return undefined
+  }
+  const fields = fromApiVals(event.fields, eventSig.fieldNames, eventSig.fieldTypes)
+  return {
+    txId: event.txHash,
+    blockHash: event.blockHash,
+    contractAddress: event.contractAddress,
+    eventIndex: event.eventIndex,
+    name: eventSig.name,
+    fields
+  } as EventType
 }
 
-function formatEvent(event: EventType): string {
-  const num = formatUnits(event.fields.num, globalConfig.countDecimals)
-  switch (event.name) {
-    case 'ElectricityProduced':
-      return `ElectricityProduced: ${num} kWh`
-    case 'ElectricityConsumed':
-      return `ElectricityConsumed: ${num} kWh, rewardAmount: ${formatUnits((event as ElectricityTypes.ElectricityConsumedEvent).fields.rewardAmount, 18)} ${globalConfig.tokenSymbol}`
-    default:
-      return ``
+async function getEvents(page: number): Promise<EventType[]> {
+  const provider = web3.getCurrentExplorerProvider()
+  if (provider === undefined) {
+    throw new Error(`no explorer provider specified`)
   }
+  const contractAddress = globalConfig.electricity.address
+  const events = await provider.contractEvents.getContractEventsContractAddressContractAddress(contractAddress, { page, limit: DefaultPageSize })
+  return events.map((event) => toElectricityEvent(event)).filter((e) => e !== undefined) as EventType[]
 }
 
 export const EventList = () => {
-  const { events } = useElectricityEvent()
+  const [isLoading, setIsLoading] = useState(true)
+  const [currentEvents, setCurrentEvents] = useState<EventType[]>([])
+  const [pageNumber, setPageNumber] = useState<number>(1)
+  const { data: blockNumber } = useBlockNumber()
+  const { enqueueSnackbar } = useSnackbar()
+
+  useEffect(() => {
+    if (blockNumber === undefined) {
+      return
+    }
+
+    const fetch = async () => {
+      setIsLoading(true)
+      try {
+        const events = await getEvents(pageNumber)
+        setCurrentEvents(events)
+        setIsLoading(false)
+      } catch (error) {
+        setIsLoading(false)
+        enqueueSnackbar(`Failed to get events, error: ${error}`, { persist: true, variant: 'error' })
+        console.error(`failed to get events, error: ${error}`)
+      }
+    }
+
+    fetch()
+
+  }, [pageNumber, blockNumber, enqueueSnackbar])
 
   return (
-    <List>
-      {events.map((event, index) => (
-        <ul key={index}>{formatEvent(event)}</ul>
-      ))}
-    </List>
-  );
+    <Container>
+      <ListEvents events={currentEvents}/>
+      <PageSwitch
+        pageNumber={pageNumber}
+        setPageNumber={setPageNumber}
+        numberOfElementsLoaded={currentEvents.length}
+      />
+    </Container>
+  )
 }
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+  width: 50%;
+`
