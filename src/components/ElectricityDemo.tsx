@@ -70,14 +70,19 @@ export const ElectricityDemo = () => {
     }
   }
 
-  const onDecreaseNumChange = (input: string) => {
+  const onDecreaseNumChange = async (input: string) => {
     if (input === '') {
       setConsumeNum(undefined)
       setError(undefined)
       return
     }
     try {
-      setConsumeNum({ raw: input, value: checkNumber(input, globalConfig.countDecimals) })
+      const currentCount = (await globalConfig.electricity.fetchState()).fields.count
+      const value = checkNumber(input, globalConfig.countDecimals)
+      if (value < currentCount) {
+        throw new Error(`not enough electricity available`)
+      }
+      setConsumeNum({ raw: input, value })
       setError(undefined)
     } catch (error) {
       setConsumeNum(undefined)
