@@ -6,6 +6,8 @@ import styled from 'styled-components'
 import { ElectricityState } from './ElectricityState'
 import { EventList } from './Events'
 
+const MaximumElectricity = 1000n * (10n ** BigInt(globalConfig.countDecimals))
+
 const Input = styled.input`
   margin-top: 10px;
   width: 300px;
@@ -51,24 +53,30 @@ function checkNumber(input: string, decimals: number): bigint {
   if (result <= 0n) {
     throw new Error('number must be greater than 0')
   }
+  if (result > MaximumElectricity) {
+    throw new Error('number must be less than 1000.0')
+  }
   return result
 }
 
 export const ElectricityDemo = () => {
   const context = useAlephiumConnectContext()
-  const [produceNum, setProduceNum] = useState<string | undefined>()
-  const [consumeNum, setConsumeNum] = useState<string | undefined>()
+  const [produceNumInput, setProduceNumInput] = useState<string | undefined>()
+  const [produceNum, setProduceNum] = useState<bigint | undefined>()
+  const [consumeNumInput, setConsumeNumInput] = useState<string | undefined>()
+  const [consumeNum, setConsumeNum] = useState<bigint | undefined>()
   const [error, setError] = useState<string | undefined>()
 
   const onProduceNumChange = (input: string) => {
     if (input === '') {
+      setProduceNumInput(undefined)
       setProduceNum(undefined)
       setError(undefined)
       return
     }
     try {
-      setProduceNum(input)
-      checkNumber(input, globalConfig.countDecimals)
+      setProduceNumInput(input)
+      setProduceNum(checkNumber(input, globalConfig.countDecimals))
       setError(undefined)
     } catch (error) {
       setError(`${error}`)
@@ -77,39 +85,42 @@ export const ElectricityDemo = () => {
 
   const onConsumeNumChange = async (input: string) => {
     if (input === '') {
+      setConsumeNumInput(undefined)
       setConsumeNum(undefined)
       setError(undefined)
       return
     }
     try {
-      setConsumeNum(input)
-      checkNumber(input, globalConfig.countDecimals)
+      setConsumeNumInput(input)
+      setConsumeNum(checkNumber(input, globalConfig.countDecimals))
       setError(undefined)
     } catch (error) {
       setError(`${error}`)
     }
   }
 
-  const onIncreaseButtonClick = () => {
+  const onProduceButtonClick = () => {
     if (context.signerProvider !== undefined && produceNum !== undefined) {
-      produce(context.signerProvider, checkNumber(produceNum, globalConfig.countDecimals)).then((result) => {
+      produce(context.signerProvider, produceNum).then((result) => {
         setProduceNum(undefined)
-        console.log(`increase tx id: ${result.txId}`)
+        setProduceNumInput(undefined)
+        console.log(`produce tx id: ${result.txId}`)
       })
     }
   }
 
-  const onDecreaseButtonClick = () => {
+  const onConsumeButtonClick = () => {
     if (context.signerProvider !== undefined && consumeNum !== undefined && context.account?.address !== undefined) {
-      consume(context.signerProvider, checkNumber(consumeNum, globalConfig.countDecimals)).then((result) => {
+      consume(context.signerProvider, consumeNum).then((result) => {
         setConsumeNum(undefined)
-        console.log(`decrease tx id: ${result.txId}`)
+        setConsumeNumInput(undefined)
+        console.log(`consume tx id: ${result.txId}`)
       })
     }
   }
 
-  const increaseEnabled = context.account && error === undefined && produceNum !== undefined
-  const decreaseEnabled = context.account && error === undefined && consumeNum !== undefined
+  const produceEnabled = context.account && error === undefined && produceNum !== undefined
+  const consumeEnabled = context.account && error === undefined && consumeNum !== undefined
 
   return (
     <>
@@ -118,22 +129,22 @@ export const ElectricityDemo = () => {
           <Input
             placeholder='Enter a number'
             onChange={(e) => onProduceNumChange(e.target.value)}
-            value={produceNum !== undefined ? produceNum : ''}
+            value={produceNumInput !== undefined ? produceNumInput : ''}
           />
           <Button
-            onClick={onIncreaseButtonClick}
-            disabled={!increaseEnabled}
+            onClick={onProduceButtonClick}
+            disabled={!produceEnabled}
           >
             Produce Electricity (kWh)
           </Button>
           <Input
             placeholder='Enter a number'
             onChange={(e) => onConsumeNumChange(e.target.value)}
-            value={consumeNum !== undefined ? consumeNum : ''}
+            value={consumeNumInput !== undefined ? consumeNumInput : ''}
           />
           <Button
-            onClick={onDecreaseButtonClick}
-            disabled={!decreaseEnabled}
+            onClick={onConsumeButtonClick}
+            disabled={!consumeEnabled}
           >
             Consume Electricity (kWh)
           </Button>
