@@ -15,10 +15,10 @@ export const ElectricityState = () => {
 
   return (
     <>
-      <div>
+      <div style={{marginTop: '20px'}}>
         {
           currentCount !== undefined
-            ? <span style={{textAlign: 'center', fontSize: '1.4rem', marginTop: '20px'}}>
+            ? <span style={{textAlign: 'center', fontSize: '1.4rem'}}>
                 Electricity available: {formatUnits(currentCount.toString(), globalConfig.countDecimals)} kWh
               </span>
             : null
