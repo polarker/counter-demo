@@ -13,7 +13,7 @@ import ExternalLink from './StyledLink';
 import { Paper } from '@mui/material';
 
 function shorten(str: string): string {
-  return str.slice(0, 12) + '...' + str.slice(-12)
+  return str.slice(0, 8) + '...' + str.slice(-8)
 }
 
 function Link({ text, type } : { text: string, type: 'transactions' | 'addresses' }) {
